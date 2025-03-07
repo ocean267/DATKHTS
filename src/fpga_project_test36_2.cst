@@ -1,0 +1,21 @@
+//Copyright (C)2014-2024 Gowin Semiconductor Corporation.
+//All rights reserved. 
+//File Title: Physical Constraints file
+//Tool Version: V1.9.11 (64-bit)
+//Part Number: GW1NR-LV9QN88PC6/I5
+//Device: GW1NR-9
+//Device Version: C
+//Created Time: Fri 03 07 01:13:57 2025
+
+IO_LOC "sensor_scl" 29;
+IO_PORT "sensor_scl" IO_TYPE=LVCMOS18 PULL_MODE=UP DRIVE=8 BANK_VCCIO=1.8;
+IO_LOC "lcd_scl" 27;
+IO_PORT "lcd_scl" IO_TYPE=LVCMOS18 PULL_MODE=UP DRIVE=8 BANK_VCCIO=1.8;
+IO_LOC "sensor_sda" 30;
+IO_PORT "sensor_sda" IO_TYPE=LVCMOS18 PULL_MODE=UP DRIVE=8 BANK_VCCIO=1.8;
+IO_LOC "lcd_sda" 28;
+IO_PORT "lcd_sda" IO_TYPE=LVCMOS18 PULL_MODE=UP DRIVE=8 BANK_VCCIO=1.8;
+IO_LOC "rst_n" 4;
+IO_PORT "rst_n" IO_TYPE=LVCMOS18 PULL_MODE=UP BANK_VCCIO=1.8;
+IO_LOC "clk" 52;
+IO_PORT "clk" IO_TYPE=LVCMOS18 PULL_MODE=UP BANK_VCCIO=1.8;
