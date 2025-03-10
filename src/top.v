@@ -27,7 +27,8 @@ module top(
     // -------------------------------
     wire sensor_req;
     wire sensor_done;
-    wire [7:0] sensor_data;
+    // Khai báo wire cho frame 24-bit (nếu module i2c_readframe đã được cập nhật)
+    wire [23:0] sensor_frame;
 
     // Ở đây sensor_req luôn kích hoạt đọc, nhưng trong ứng dụng thực tế bạn có thể dùng FSM điều khiển.
     assign sensor_req = 1'b1;
@@ -38,6 +39,9 @@ module top(
     assign sensor_start_frame = sensor_req;
     assign sensor_stop_frame  = sensor_req;
 
+    // Dùng wire dummy cho cổng sda_en nếu không sử dụng
+    wire dummy_sda_en;
+    
     i2c_readframe i2c_readframe_inst(
         .clk_1MHz    (clk_1MHz),
         .rst_n       (rst_n),
@@ -46,9 +50,24 @@ module top(
         .stop_frame  (sensor_stop_frame),
         .sda         (sensor_sda),
         .scl         (sensor_scl),
-        .data        (sensor_data),
+        .frame_data  (sensor_frame), // Thay đổi từ "data" sang "frame_data"
         .done        (sensor_done),
-        .sda_en      ()         // Có thể bỏ qua nếu không cần sử dụng
+        .sda_en      (dummy_sda_en)
+    );
+
+    // -------------------------------
+    // Phân tích frame để lấy sensor_data:
+    // Module frame_parser nhận frame 24-bit và kiểm tra hợp lệ, xuất sensor_data (8-bit)
+    // -------------------------------
+    wire valid_data;
+    wire [7:0] sensor_data;
+    frame_parser frame_parser_inst (
+        .clk         (clk_1MHz),
+        .rst_n       (rst_n),
+        .valid_frame (sensor_done),
+        .frame       (sensor_frame),
+        .valid_data  (valid_data),
+        .sensor_data (sensor_data)
     );
 
     // -------------------------------
@@ -67,7 +86,7 @@ module top(
     // -------------------------------
     wire [127:0] row1;
     wire [127:0] row2;
-    assign row1 = (sensor_data > 8'd100) ? "DANGER          " : "SAFE           ";
+    assign row1 = (sensor_data > 8'd100) ?  "SAFE            " : "DANGER          " ;
     assign row2 = sensor_ascii;
 
     // -------------------------------
